@@ -1,0 +1,63 @@
+# Crypto book configuration (Phase 1).
+# Every number here is an assumption that is logged in docs/DECISIONS.md. Change only via a new decision entry.
+
+book: crypto
+annualization_days: 365          # crypto trades every day
+
+data:
+  source: coinbase               # longest clean USD spot history (BTC from 2015-07); see DECISIONS 2026-10-11
+  history_start: "2015-07-20"
+  # Ten large, liquid coins that are tradable on Alpaca today.
+  # WARNING: chosen with hindsight (survivorship bias). Robustness is checked on the "legacy" subset below,
+  # which uses only coins already large and listed on Coinbase by early 2018.
+  universe: [BTC, ETH, LTC, BCH, LINK, SOL, ADA, AVAX, DOGE, DOT]
+  legacy_universe: [BTC, ETH, LTC, BCH]
+  min_history_days: 250          # an asset becomes eligible only after this many daily bars
+
+splits:
+  research_start: "2016-01-01"
+  holdout_start: "2024-10-01"    # LOCKED. Everything on/after this date is the final holdout. Opening it is logged.
+  walk_forward:
+    train_days: 1095             # 3 years
+    test_days: 182               # ~6 months
+    step_days: 182
+
+costs:
+  # Alpaca crypto tier-1 taker fee = 25 bps per side (docs.alpaca.markets/docs/crypto-fees, checked 2026-10-11).
+  fee_bps: 25
+  # Slippage = half the quoted spread plus a small impact allowance. Spreads measured on Alpaca 2026-10-11 (one
+  # snapshot): BTC 2.3, ETH 2.0, SOL 9.4, LINK 16.5, DOT 21.9, AVAX 24.5, ADA 32.1, DOGE 35.2, LTC 60.3, BCH 61.2 bps.
+  slippage_bps:
+    BTC: 5
+    ETH: 5
+    SOL: 10
+    LTC: 35
+    BCH: 35
+    default: 25
+  stress_multiplier: 2.0         # protocol: every result is re-run at 2x costs
+
+execution:
+  signal_on: close               # signals use completed daily bars only
+  fill_at: next_open             # orders fill at the next bar's open
+  delay_stress_bars: 1           # protocol: re-run with one extra bar of delay
+  cash_yield: 0.0                # idle cash earns nothing (conservative)
+
+portfolio:
+  sleeve_budget: {trend: 0.3333, rotation: 0.3333, dip: 0.3334}
+  vol_target_annual: 0.40        # crypto book target vol (scale-down only, never leverage). Not tuned.
+  vol_lookback_days: 60
+  max_weight: {BTC: 0.50, ETH: 0.50, default: 0.20}
+  no_trade_band: 0.02            # skip rebalances smaller than 2% of equity (exits always execute)
+
+tax:
+  # Rough U.S. taxable-account assumptions (federal + some state). Owner should replace with their own bracket.
+  short_term_rate: 0.35
+  long_term_rate: 0.20
+  long_term_days: 366            # held more than one year
+
+limits:                          # hard limits, enforced in code outside any strategy/AI path (live/paper)
+  max_daily_loss: 0.05
+  max_drawdown: 0.25
+  max_position_weight: 0.50
+  max_order_notional_frac: 0.30
+  allowed_symbols: [BTC, ETH, LTC, BCH, LINK, SOL, ADA, AVAX, DOGE, DOT]

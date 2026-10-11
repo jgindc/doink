@@ -1,0 +1,19 @@
+# secrets
+.env
+*.key
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# data cache: intraday bars are re-downloadable; daily bars are committed (small) for reproducibility
+data/raw/**/*_1h.parquet
+data/raw/**/*_4h.parquet
+data/cache/
+
+# local runtime state
+ledger/*.sqlite
+logs/
