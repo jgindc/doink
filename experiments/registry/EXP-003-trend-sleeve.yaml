@@ -1,0 +1,23 @@
+id: EXP-003
+title: Trend sleeve (time-series momentum), crypto
+registered: 2026-10-11
+kind: grid
+sleeve: trend
+hypothesis: >
+  Holding each coin only while its own trend is up (blend of lookbacks) and sitting in cash otherwise improves
+  risk-adjusted returns and sharply cuts drawdowns versus buy-and-hold, after costs.
+evidence: [Moskowitz-Ooi-Pedersen 2012 (TSMOM), Liu-Tsyvinski 2021 (crypto time-series momentum)]
+prior: >
+  Moderately confident trend cuts drawdowns; less confident it beats the BTC 200-day SMA baseline on Sharpe,
+  because that baseline is itself a trend rule and alts add cost and correlation.
+default: {lookbacks: [20, 60, 120, 250], signal: return_sign, vol_lookback: 60}
+grid:
+  lookbacks: [[10, 20, 40, 80], [20, 60, 120, 250], [60, 120, 250, 365]]
+  signal: [return_sign, above_sma]
+n_trials: 6
+data: {book: crypto, universe: main, research_end: "2024-09-30"}
+simulation: {start: "2016-01-01", band: 0.02, costs: base}
+walk_forward: {train_days: 1095, test_days: 182, step_days: 182, select_by: train_sharpe}
+oos: ["2018-12-31", "2024-09-30"]
+gates: [G1, G2, G3, G4, G5, G6, G7, G8, G9]   # definitions in docs/TESTING_PROTOCOL.md
+dsr: {n_trials: 29, note: "all planned Phase-1 trials (6 + 9 + 12 + 2); V[SR] from this grid over OOS dates"}

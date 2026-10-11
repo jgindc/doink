@@ -1,0 +1,23 @@
+id: EXP-004
+title: Momentum rotation sleeve (cross-sectional), crypto
+registered: 2026-10-11
+kind: grid
+sleeve: rotation
+hypothesis: >
+  Holding the top-N coins by risk-adjusted momentum (only those with positive momentum; rest cash), rebalanced
+  weekly, beats buy-and-hold and the simple trend baseline on risk-adjusted terms after costs.
+evidence: [Jegadeesh-Titman 1993, Liu-Tsyvinski-Wu 2022 (crypto momentum factor)]
+prior: >
+  Skeptical. Alt spreads + fees make weekly rotation expensive (~0.6-1.2% per round trip), and the universe was
+  chosen with hindsight, which flatters rotation most of all. The legacy-universe gate (G9) matters here.
+default: {lookbacks: [30, 60, 90], top_n: 2, rebalance_days: 7, vol_lookback: 60}
+grid:
+  lookbacks: [[7, 14, 21, 28], [30, 60, 90], [60, 120, 180]]
+  top_n: [1, 2, 3]
+n_trials: 9
+data: {book: crypto, universe: main, research_end: "2024-09-30"}
+simulation: {start: "2016-01-01", band: 0.02, costs: base}
+walk_forward: {train_days: 1095, test_days: 182, step_days: 182, select_by: train_sharpe}
+oos: ["2018-12-31", "2024-09-30"]
+gates: [G1, G2, G3, G4, G5, G6, G7, G8, G9]
+dsr: {n_trials: 29, note: "V[SR] from this grid over OOS dates"}

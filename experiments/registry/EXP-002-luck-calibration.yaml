@@ -1,0 +1,21 @@
+id: EXP-002
+title: Luck calibration — random strategies through the same pipeline
+registered: 2026-10-11
+kind: luck
+hypothesis: >
+  Strategies with no information should rarely pass our gates. The share that do sets how skeptical we must be
+  of any real result. Random strategies use the same universe, inverse-vol sizing, simulator, costs, no-trade band.
+generators:
+  random_timing:   {count: 1000, mean_hold_days: [5, 10, 20, 40], time_in_market: [0.3, 0.8]}   # uniform draw
+  random_rotation: {count: 1000, top_n: [1, 2, 3], rebalance_days: 7}
+seed: 20261011
+data: {book: crypto, universe: main, research_end: "2024-09-30"}
+simulation: {start: "2016-01-01", band: 0.02, costs: base}
+oos: ["2018-12-31", "2024-09-30"]
+evaluation:
+  singles: "share of the 2000 random strategies passing G1, G2, G3 individually and jointly (OOS dates)"
+  pseudo_experiments: >
+    random strategies grouped (in generation order) into groups of 9 = same size as the rotation grid; each group
+    goes through the same walk-forward selection (3y/6m/6m); report share passing G1, G2, G3, G4, G5, G6 jointly.
+    G7-G9 not evaluated for random groups.
+n_trials: 0   # calibration runs are not strategy trials

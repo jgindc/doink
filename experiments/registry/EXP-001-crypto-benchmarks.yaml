@@ -1,0 +1,15 @@
+id: EXP-001
+title: Crypto benchmarks (reference, not a strategy)
+registered: 2026-10-11
+kind: benchmarks
+hypothesis: >
+  Establish the bars every crypto strategy must clear, through the same simulator and costs:
+  BTC buy-and-hold, 50/50 BTC/ETH rebalanced monthly, BTC 200-day SMA trend (long above, cash below).
+  Equal-weight of the eligible universe (monthly) is reported for information only.
+data: {book: crypto, universe: main, research_end: "2024-09-30"}
+simulation: {start: "2016-01-01", band: 0.0, costs: base}
+periods:
+  full: ["2016-01-01", "2024-09-30"]
+  oos: ["2018-12-31", "2024-09-30"]     # = walk-forward out-of-sample span used by all sleeve experiments
+n_trials: 0
+gates: none

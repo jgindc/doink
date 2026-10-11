@@ -1,0 +1,24 @@
+id: EXP-005
+title: Dip-buying inside uptrends (short-term mean reversion), crypto
+registered: 2026-10-11
+kind: grid
+sleeve: dip
+hypothesis: >
+  Buying short, sharp oversold moves (low short-period RSI) only while price is above its 200-day SMA, and exiting
+  on the bounce (close > SMA5) or a time stop, earns a positive edge after costs and improves the ensemble.
+evidence: [Connors-style RSI(2) studies in equities; crypto evidence for short-term reversal is weak/mixed]
+prior: >
+  Expect weak or no edge in crypto (short horizons show momentum more than reversal) and high cost drag.
+  Low time in market means it may fail G1 even if trades are profitable.
+default: {rsi_len: 2, entry: 10, exit_sma: 5, trend_sma: 200, time_stop: 10, vol_lookback: 60}
+grid:
+  rsi_len: [2, 3]
+  entry: [10, 20, 30]
+  time_stop: [5, 10]
+n_trials: 12
+data: {book: crypto, universe: main, research_end: "2024-09-30"}
+simulation: {start: "2016-01-01", band: 0.02, costs: base}
+walk_forward: {train_days: 1095, test_days: 182, step_days: 182, select_by: train_sharpe}
+oos: ["2018-12-31", "2024-09-30"]
+gates: [G1, G2, G3, G4, G5, G6, G7, G8, G9]
+dsr: {n_trials: 29, note: "V[SR] from this grid over OOS dates"}
