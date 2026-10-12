@@ -62,7 +62,7 @@ def simulate(targets: pd.DataFrame, panel, costs: CostModel, *, start=None, end=
 
     O = panel.open[assets].reindex(dates).to_numpy(float)
     C = panel.close[assets].reindex(dates).to_numpy(float)
-    T = exec_targets.reindex(dates).to_numpy(float)
+    T = exec_targets.reindex(dates).to_numpy(float, copy=True)
     # On the first simulated day, carry in the latest decision made before the start (e.g. buy-and-hold).
     if len(dates) and np.all(np.isnan(T[0])):
         before = exec_targets.loc[:dates[0]].dropna(how="all")
