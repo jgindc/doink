@@ -36,6 +36,13 @@ def test_delay_shifts_execution_by_one_more_bar():
     assert res.equity.iloc[-1] == pytest.approx(1.0)
 
 
+def test_decision_before_start_carries_into_first_day():
+    c = [100.0] * 5 + [200.0] * 5
+    p = make_panel({"X": c})
+    res = simulate(targets_for(p, {0: {"X": 1.0}}), p, FREE, start=p.index[3])
+    assert res.equity.iloc[-1] == pytest.approx(2.0)
+
+
 def test_round_trip_costs():
     p = make_panel({"X": [100.0] * 10})
     cm = CostModel(fee_bps=25, slippage_bps={"default": 5})

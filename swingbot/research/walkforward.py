@@ -34,8 +34,9 @@ def walk_forward(returns: pd.DataFrame, weights: dict[str, pd.DataFrame] | None,
         best = max(sr, key=sr.get)
         piece = returns.loc[t:t_end, best].copy()
         if prev is not None and best != prev and weights is not None and len(piece):
+            # both books as they stood at the close before the switch; we trade old -> new at the next open
             w_old = weights[prev].loc[:t - pd.Timedelta(days=1)].iloc[-1]
-            w_new = weights[best].loc[:t].iloc[-1]
+            w_new = weights[best].loc[:t - pd.Timedelta(days=1)].iloc[-1]
             rates = pd.Series(cost_rates).reindex(w_old.index).fillna(0.0)
             piece.iloc[0] -= float(((w_new - w_old).abs() * rates).sum())
         pieces.append(piece)
